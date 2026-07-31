@@ -12,6 +12,125 @@ This will be a
 
 <img width="415" height="739" alt="image" src="https://github.com/user-attachments/assets/1cd5580f-0482-40fc-bcd7-61006573fd2d" />
 
+# Davolm Goonstone
+
+Medium Humanoid Monstrosity (High Elf/Grimm), Chaotic Evil
+
+**Armor Class** 25-26
+
+**Hit Points** 1000 - 1400
+
+**Speed** 60ft, 80 fly (Horror Beyond Death)
+
+STR 26 (+8) DEX 22 (+6) CON 22 (+6) INT 26 (+8) WIS 20 (+5) CHA 12 (+1)
+
+**Saving Throws** Str +17, Dex +15 (adv), Con +15, Int +17, Wis +14, Cha +3 (advantage on spell saves)
+
+**Skills** Arcana +22, Athletics +15, Acrobatics +13, Insight +12, Deception +8, Perception +19, Investigation +22
+
+**Damage Resistances** Fire, Cold, Lighting, Poison
+
+**Damage Immunities** Bludgeoning, Piercing, and Slashing from non-magical attacks, Necrotic
+
+**Condition Immunities** Poisoned, Frightened, Charmed, Blinded, Forced Smiling, Time Stop, Madness, Magic Sleep
+
+**Senses** Truesight 60ft, Darkvision 120ft, passive Perception 29
+
+**Languages** all
+
+**Proficiency Bonus** +7
+
+**Initiative** +13, Advantage
+
+---
+
+**Legendary Resistance** (5/day) If Goonstone fails a saving throw he can choose to succeed instead. Goonstone can also spend a Legendary Resistance to ignore a counterspell on a spell he has cast once per day.
+
+**Supreme Intellect.** Goonstone has expertise in Perception, Investigation, and Arcana checks. He has advantage on Intelligence checks (skills or otherwise).
+
+**Unnerving Prescence.** Just being near this guy gives you the creeps. Goonstone has advantage on Intimidation and Insight checks. He cannot be charmed or frightened.
+
+**Grimm Sight**. Goonstone has Truesight out to 60 feet. He cannot be blinded.
+
+**Relative Insanity**. Goonstone is immune to any Madness effects. Can't get more crazy than that.
+
+**Special Equipment**. Goonstone has the following equipment:
+	**Staff of Power** (+2 AC, saving throws, and spell attack rolls (included in stats))
+	**Robes of the Archmagi** (AC = 15+dex, advantage on spell saving throws and other magical effects, +2 to spell save DC and attack rolls (included in stats))
+	**Major Ring of Dual Concentration** (can concentrate on two concentration spells that are at 4th level or below at once but must make separate con saves to maintain concentration if he takes damage)
+	**Rivers of Blood** which he keeps sheathed until his second stage.
+
+**Yeet**. If Goonstone hits a medium-sized or smaller creature with his claw attack, he can choose to do minimum damage (10 slashing and 1 necrotic) and throw them. Targets must make a DC 20 dexterity saving throw or be thrown 20 ft and knocked prone, with half the distance on a success.
+
+**Zhonya's Staff**. Davolm Goonstone is immune to the effects of Time Spells.
+
+**Partial Evasion**. Goonstone takes quarter damage when he succeeds a dexterity saving throw instead of half. If he fails he instead takes three-fourths instead of full. Moonstone has advantage on Dexterity Saving Throws.
+
+**Blinding Speed**. All opportunity attacks have disadvantage on Goonstone and he gains +2-3 AC. He adds his proficiency bonus to initiative rolls and has advantage on initiative rolls.
+
+**Spellcasting**. Davolm Goonstone knows all wizard spells but has the following spells prepared. His spell save DC is **27**, and he has a **+18** to hit with spells.
+	**Cantrips** (at will): Firebolt (5d10), Lightning Lure (5d8), Minor Illusion, Prestidigitation, Shocking Grasp (5d8), Green-Flame Blade (5d8), Booming Blade (5d8), Eldritch Blast (5 rays)
+	**1st level** (at will): Burning Hands, Frost Fingers, Disguise Self, Mage Armor, Ice Knife, Feather Fall, Thunderwave
+	**2nd level** (at will): Hold Person, Invisibility, Knock, Mirror Image, Misty Step, Scorching Ray, Ray of Enfeeblement, Shatter
+	**3rd level** (7/7 slots): Fireball, Counterspell, Haste, Fly, Intellect Fortress, Lightning Bolt, Remove Curse, Dispel Magic, Vampiric Touch
+	**4th level** (6/6 slots): Fire Shield, Dimension Door, Sickening Radiance, Elemental Bane, Widogast’s Web of Fire, Blight, Wall of Fire
+	**5th level** (5/5 slots): Hold Monster, Telekinesis, Moonstone's Fist, Wall of Force, Cone of Cold, Dominate Person, Cloudkill
+	**6th level** (5/5 slots): Flesh to Stone, Disintegrate, Chain Lightning, Globe of Invulnerability, Circle of Death
+	**7th level** (4/4 slots): Power Word Pain, Prismatic Spray, Finger of Death, Reverse Gravity, Contingency
+	**8th level** (3/3 slots): Mind Blank, Power Word Stun, Reality Break, Sunburst, Telepathy, Anti Magic Field.
+	**9th level** (2/2 slots): Meteor Swarm, Power Word Kill, Blade of Disaster, Time Stop.
+
+**Horror Beyond Death**. When Goonstone reaches 0 hp he regains all his health and legendary actions, restores all spells slots below 8th level, grows massive Nevermore wings granting him a flying speed of 80 ft., replaces Claw with Rivers of Blood, and has access to the mythic actions. All spells he casts now count as 1 level higher (including 9th). His strength increases to 30 until he rests.
+
+## Actions
+
+---
+
+**Multiattack**. Goonstone makes 3 attacks, any of which can be cantrips or casts two spells at 5th level or lower. The combined levels cannot exceed 6.
+
+**Claw**. Melee Weapon Attack: +15 to hit, reach 5ft., one target. Hit: 2d10 + 8 slashing damage plus 1d12 necrotic.
+
+**Rivers of Blood**. Melee Weapon Attack: +18 to hit, reach 5ft., one target. Hit: 4d10 + 11 slashing damage. Upon hitting a creature with Rivers of Blood they gain blood loss buildup equal to one third the damage dealt. This weapon scores critical hits on 19-20.
+
+A creature can withstand blood loss equal to its constitution score + its level. When that number is reached or exceeded, it loses all Blood Loss buildup and loses 10% of its maximum hit points. A creature loses Blood Loss buildup upon receiving healing. 
+
+## Reactions (2 reactions)
+
+---
+**Parry**. Goonstone can catch a physical weapon attack and reduce the damage by 2d10+8 (4d10+11 with RoB). If this reduces the damage to zero he can use the **Yeet** ability on the creature that targeted him but without dealing damage.
+
+## Legendary Actions (6 pts)
+
+---
+
+**Spell** (1pt). Goonstone casts a 2nd-level spell or lower. 
+
+**Claw** (Free). Goonstone makes a claw attack. 
+
+**Blinding Speed** (1 pt). Goonstone moves his speed without provoking opportunity attacks. 
+
+**Chronomantic Shift** (1 pt). Goonstone increases or decreases the duration of a timed effect by 6 seconds. This can only be used once per round. 
+
+**Counterspell**. Goonstone uses Counterspell on a spell being cast. This does not cost a reaction. Moonstone cannot take a Legendary Action after the turn of the creature counterspelled. (1 pt)
+
+**Legendary Rebuke**. When subject to a condition he is immune to (Poisoned, Frightened, Charmed, Blinded, Forced Smiling, Time Stop, Madness), Goonstone can use a reaction to reflect it back at the creature, forcing them to make the save against their effect using their DC. Moonstone cannot take a Legendary Action after the turn of the creature he reflected the effect onto. (1 pt)
+
+## Mythic Actions
+
+---
+
+**Featherstorm**. (Recharge 5-6) (1 pt). Goonstone launches a hail of massive feathers. All creatures in a 15ft. wide, 100ft. long line must make a DC 24 Dexterity saving throw or take 8d12 piercing damage and be restrained until the end of their next turn, or half as much on a success and not be restrained. 
+
+**Feather Shot** (1 pt). Ranged Weapon Attack: +13 to hit, range 80ft., one target. Hit: 2d12+8 piercing damage. If this hits by 26 or more then the target must make a DC 18 Strength save or be restrained until the end of their next turn. 
+
+**Slash** (1 pt). Goonstone makes an attack with Rivers of Blood. 
+
+**Mythic Rebuke** (1 pt). Goonstone cancels one of the following effects on himself when it occurs: Stunned, Petrified, Paralyzed, Cursed, Deafened, Incapacitated, Exhaustion, Unconscious. Moonstone cannot take a Legendary Action after the turn of the creature that caused this effect.
+
+**Spell**. Goonstone casts a spell if he has the spell slot for it. Each spell costs a certain amount of legendary action points to use, as follows.
+	3-5 (2 pts)
+	6-7 (3 pts)
+	8-9 (4 pts)
 
 
 
