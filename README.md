@@ -4,6 +4,8 @@ This will be a
 
 [![ramen.jpg](https://i.postimg.cc/K8NWpyrb/ramen.jpg)](https://postimg.cc/211T3MK9)
 
+[![Ozzy.jpg](https://i.postimg.cc/MG91NBG9/Ozzy.jpg)](https://postimg.cc/McjcjvVB)
+
 <img width="309" height="426" alt="Screenshot_20251205_123954_YouTube" src="https://github.com/user-attachments/assets/391fd08e-dbda-4eff-a22c-b4c5c3d1b1b1" />
 
 <img width="1420" height="1080" alt="SeaBear" src="https://github.com/user-attachments/assets/cdcb6c3e-4d7c-47c6-898b-e76aec3e3c99" />
