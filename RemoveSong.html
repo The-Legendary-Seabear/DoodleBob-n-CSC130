@@ -1,7 +1,27 @@
-<head>
-<title>Remove Song</title>
-</head>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="HTML page for removing songs">
+        <meta name="author" content="Cody Owens">
 
-<body>
+        <link rel="stylesheet" href="Main.css">
+        <title>Remove Song</title>
+    </head>
 
-</body>
+    <body>
+        <h1>Remove Song</h1>
+
+        <form id="removeSongForm">
+            <div class="form-group">
+                <label for="songName">Select Song:</label>
+                <select id="songName" name="songName"></select>
+                <span id="songNameError" class="error"></span>
+            </div>
+
+            <button type="submit">Remove Song from Library</button>
+        </form>
+
+        <script src="RemoveSong.js"></script>
+    </body>
+</html>
