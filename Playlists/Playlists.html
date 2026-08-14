@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>My Playlists</title>
+
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../Main.css">
+    </head>
+    
+    <body>
+        <header>
+            <h1>My Music</h1>
+        </header>
+
+        <main class="music-container">
+
+            <!-- Songs / Selected Playlist -->
+            <section class="songs-section">
+
+                <h2 id="selectedPlaylistName">
+                    Select a Playlist
+                </h2>
+
+                <ul id="songList">
+                    <!-- JavaScript will put songs here -->
+                </ul>
+
+                <button id="addSongButton">
+                    + Add Song
+                </button>
+
+            </section>
+
+
+            <!-- Playlists -->
+            <aside class="playlists-section">
+
+                <div class="playlist-header">
+                    <h2>Playlists</h2>
+
+                    <button id="createPlaylistButton">
+                        + New Playlist
+                    </button>
+                </div>
+
+                <ul id="playlistList">
+                    <!-- JavaScript will put playlists here -->
+                </ul>
+
+            </aside>
+        </main>
+        <script src="script.js"></script>
+    </body>
+</html>
