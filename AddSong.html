@@ -6,9 +6,13 @@
         <meta name="author" content="Cody Owens">
 
         <link rel="stylesheet" href="Main.css">
-    </head>
+        <script src="idbStorage.js"></script>
+        </head>
 
-    <form id="addSongForm">
+        <body>
+            <a href="HomePage.html" class="home-button">Home</a>
+
+            <form id="addSongForm">
         <div class="form-group">
             <label for="songName">Song Name:</label>
             <input type="text" id="songName" name="songName" required>
@@ -21,8 +25,37 @@
             <span id="songFileError" class="error"></span>
         </div>
 
+        <div id="previewArea" style="margin-top:12px;">
+            <label>Preview:</label>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <button type="button" id="preview-play" disabled>Play</button>
+                <button type="button" id="preview-stop" disabled>Stop</button>
+                <span id="preview-name" style="font-size:0.9em;color:#333;">No file selected</span>
+            </div>
+            <audio id="preview-audio" style="display:none;"></audio>
+        </div>
+
+        <div id="addToPlaylistArea" style="margin-top:12px;">
+            <label for="addsong-playlist-select">Add to playlist:</label>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+                <select id="addsong-playlist-select" style="flex:1; padding:8px; border-radius:6px;"></select>
+                <button type="button" id="addsong-add-to-playlist">Add to Playlist</button>
+            </div>
+            <div id="addsong-playlist-notice" style="margin-top:6px; font-size:0.9em; color:green;"></div>
+        </div>
+
+        <div id="createPlaylistArea" style="margin-top:12px;">
+            <label for="create-playlist-name">Create new playlist (will add current song if provided):</label>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+                <input id="create-playlist-name" type="text" placeholder="New playlist name" style="flex:1; padding:8px; border-radius:6px;" />
+                <button type="button" id="create-playlist-button">Create</button>
+            </div>
+            <div id="create-playlist-notice" style="margin-top:6px; font-size:0.9em; color:green;"></div>
+        </div>
+
         <button type="submit">Add Song to Library</button>
     </form>
 
-    <script src="AddSong.js"></script>
+      <script src="AddSong.js"></script>
+    </body>
 </html>

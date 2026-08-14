@@ -107,6 +107,7 @@
 </head>
 
 <body>
+  <a href="HomePage.html" class="home-button">Home</a>
   <div class="hero-art">
     <div class="player-card">
       <div class="player-header">
@@ -123,10 +124,22 @@
         <label for="song-select">Choose a song</label>
         <select id="song-select"></select>
       </div>
+      <div class="playlist-controls" style="margin-top:16px;">
+        <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+          <label for="playlist-select" style="margin:0;">Saved playlists</label>
+          <select id="playlist-select" style="flex:1; padding:8px; border-radius:8px;"></select>
+          <button id="load-playlist">Load</button>
+          <button id="delete-playlist">Delete</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <audio id="audio-player" src="Epic_Gammer_Music.mp3"></audio>
+
+  <input type="file" id="relink-file-input" accept="audio/*" style="display:none" />
+
+  <script src="idbStorage.js"></script>
 
   <script>
     const audio = document.getElementById('audio-player');
@@ -155,15 +168,103 @@
       trackTime.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
     }
 
-    function setSong(song) {
-      audio.src = song.location;
+    async function setSong(song) {
+      console.log('setSong()', song);
       trackTitle.textContent = song.name;
-      audio.load();
-      playPauseButton.textContent = '►';
-      if (!audio.paused) {
-        audio.play();
-        playPauseButton.textContent = '❚❚';
+      // reset player state
+      audio.pause();
+      audio.currentTime = 0;
+
+      let resolvedSrc = '';
+
+      try {
+        const srcToUse = song.location;
+        // If song has an associated blobId stored, prefer that
+        if (song._blobId && window.IdbStorage) {
+          const blob = await IdbStorage.getBlob(song._blobId);
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            createdUrls.push(url);
+            resolvedSrc = url;
+            console.log('Resolved blobId to objectURL for', song.name, url);
+          } else {
+            console.warn('No blob found for _blobId', song._blobId, song);
+          }
+        }
+
+        // If not resolved and location is a fakepath string, try to match stored blob by filename
+        if (!resolvedSrc && typeof srcToUse === 'string' && srcToUse.includes('fakepath') && window.IdbStorage) {
+          const parts = srcToUse.split(/[/\\]/);
+          const filename = parts[parts.length - 1];
+          try {
+            const list = await IdbStorage.listBlobs();
+            const match = list && list.find(b => b.name === filename);
+            if (match) {
+              const blob = await IdbStorage.getBlob(match.id);
+              if (blob) {
+                const url = URL.createObjectURL(blob);
+                createdUrls.push(url);
+                resolvedSrc = url;
+                console.log('Resolved filename to objectURL for', song.name, url);
+              }
+            } else {
+              console.warn('Could not resolve filename to stored blob for', filename);
+            }
+          } catch (e) {
+            console.warn('Error listing/getting blobs', e);
+          }
+        }
+
+        // Fallback to using provided string location
+        if (!resolvedSrc) {
+          if (typeof srcToUse === 'string') resolvedSrc = srcToUse;
+        }
+      } catch (e) {
+        console.warn('Error resolving song source', e);
       }
+
+      if (!resolvedSrc) {
+        audio.src = '';
+        playPauseButton.textContent = '►';
+        // Attempt to offer relink flow to user
+        try {
+          if (confirm('No playable source available for "' + song.name + '". Would you like to select a local file to relink now?')) {
+            await relinkSongFile(song);
+            return; // relinkSongFile will call setSong again after updating
+          }
+        } catch (e) {
+          console.warn('Relink flow failed or was cancelled', e);
+        }
+        alert('No playable source available for "' + song.name + '". Re-add the file via Add Song.');
+        return;
+      }
+
+      // set the src and wait for metadata to be available before allowing play
+      audio.src = resolvedSrc;
+      try {
+        audio.load();
+      } catch (e) {
+        console.warn('audio.load() threw', e);
+      }
+
+      // await either loadedmetadata or canplay (whichever comes first)
+      await new Promise((resolve) => {
+        const onReady = () => { cleanup(); resolve(); };
+        const onError = () => { cleanup(); resolve(); };
+        const cleanup = () => {
+          audio.removeEventListener('loadedmetadata', onReady);
+          audio.removeEventListener('canplay', onReady);
+          audio.removeEventListener('error', onError);
+        };
+        audio.addEventListener('loadedmetadata', onReady);
+        audio.addEventListener('canplay', onReady);
+        audio.addEventListener('error', onError);
+        // safety timeout in case events don't fire
+        setTimeout(() => { cleanup(); resolve(); }, 2000);
+      });
+
+      playPauseButton.textContent = audio.paused ? '►' : '❚❚';
+      console.log('audio.readyState after setSong=', audio.readyState, 'duration=', audio.duration, 'src=', audio.src);
     }
 
     function populateSongSelect() {
@@ -178,19 +279,66 @@
         }
         songSelect.appendChild(option);
       });
+      console.log('populateSongSelect: populated', songs.length, 'songs');
     }
 
-    function loadLibrarySongs() {
+    const createdUrls = [];
+
+    async function loadLibrarySongs() {
       const storedSongs = localStorage.getItem('librarySongs');
-      if (!storedSongs) return;
+        if (!storedSongs) return; 
+
+        // Revoke created object URLs on unload to free memory
+        window.addEventListener('unload', () => {
+          try { createdUrls.forEach(u => URL.revokeObjectURL(u)); } catch (e) {}
+        });
       try {
         const parsed = JSON.parse(storedSongs);
         if (Array.isArray(parsed)) {
-          parsed.forEach(song => {
+          for (const song of parsed) {
             if (song && song.name && song.location) {
-              songs.push({ name: song.name, location: song.location });
+              // if location is an object with blobId, retrieve the blob and create an objectURL
+              if (typeof song.location === 'object' && song.location.blobId && window.IdbStorage) {
+                try {
+                  const blob = await IdbStorage.getBlob(song.location.blobId);
+                  if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    createdUrls.push(url);
+                    songs.push({ name: song.name, location: url, _blobId: song.location.blobId });
+                    continue;
+                  }
+                } catch (e) {
+                  console.warn('Could not load blob for song:', song.name, e);
+                }
+              }
+              // fallback: if location is a string path (often "C:\\fakepath\\...") try to resolve by filename in IndexedDB
+              const locStr = typeof song.location === 'string' ? song.location : (song.location && song.location.filename) || '';
+              if (locStr && window.IdbStorage) {
+                try {
+                  // extract filename
+                  const parts = locStr.split(/[/\\]/);
+                  const filename = parts[parts.length - 1];
+                  if (filename) {
+                    const blobs = await IdbStorage.listBlobs();
+                    const match = blobs && blobs.find(b => b.name === filename);
+                    if (match) {
+                      const blob = await IdbStorage.getBlob(match.id);
+                      if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        createdUrls.push(url);
+                        songs.push({ name: song.name, location: url, _blobId: match.id });
+                        continue;
+                      }
+                    }
+                  }
+                } catch (e) {
+                  console.warn('Could not resolve filename to blob for song:', song.name, e);
+                }
+              }
+              // final fallback: use stored location string (may be fakepath and not playable)
+              songs.push({ name: song.name, location: locStr });
             }
-          });
+          }
         }
       } catch (error) {
         console.warn('Could not load saved songs:', error);
@@ -209,13 +357,26 @@
     });
 
     playPauseButton.addEventListener('click', () => {
+      // Use promise-aware play to catch errors (autoplay/policy or decode issues)
       if (audio.paused) {
-        audio.play();
-        playPauseButton.textContent = '❚❚';
+        const p = audio.play();
+        if (p && p.then) {
+          p.then(() => { playPauseButton.textContent = '❚❚'; })
+           .catch(err => {
+             console.error('Playback failed:', err, 'src=', audio.src);
+             alert('Playback failed: ' + (err && err.message ? err.message : err));
+           });
+        } else {
+          playPauseButton.textContent = '❚❚';
+        }
       } else {
         audio.pause();
         playPauseButton.textContent = '►';
       }
+    });
+
+    audio.addEventListener('error', () => {
+      console.error('Audio element error', audio.error, 'src=', audio.src);
     });
 
     rewindButton.addEventListener('click', () => {
@@ -235,16 +396,164 @@
       }
     });
 
-    songSelect.addEventListener('change', () => {
+    songSelect.addEventListener('change', async () => {
       const selectedOption = songSelect.selectedOptions[0];
       const song = {
         name: selectedOption.dataset.name || selectedOption.textContent,
         location: selectedOption.value
       };
-      setSong(song);
+      await setSong(song);
     });
 
-    loadLibrarySongs();
-    populateSongSelect();
+    (async function() {
+      await loadLibrarySongs();
+      populateSongSelect();
+    })();
+
+    // Playlists persistence and UI (load/delete only)
+    const playlistSelect = document.getElementById('playlist-select');
+    const loadPlaylistButton = document.getElementById('load-playlist');
+    const deletePlaylistButton = document.getElementById('delete-playlist');
+
+    let playlists = [];
+
+    function loadPlaylists() {
+      const raw = localStorage.getItem('playlists');
+      try {
+        playlists = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.warn('Could not parse playlists:', e);
+        playlists = [];
+      }
+    }
+
+    function populatePlaylistSelect() {
+      if (!playlistSelect) return;
+      playlistSelect.innerHTML = '';
+      if (playlists.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'No playlists saved';
+        playlistSelect.appendChild(opt);
+        return;
+      }
+      playlists.forEach((pl, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = pl.name + ' (' + pl.songs.length + ' songs)';
+        playlistSelect.appendChild(opt);
+      });
+    }
+
+    async function loadPlaylist() {
+      if (!playlistSelect) return;
+      const idx = playlistSelect.value;
+      if (idx === '') return;
+      const pl = playlists[Number(idx)];
+      if (!pl) return;
+      // Replace current song list with playlist songs; resolve blobs if present
+      const newSongs = [];
+      for (const s of pl.songs) {
+        if (s && s.location && typeof s.location === 'object' && s.location.blobId && window.IdbStorage) {
+          try {
+            const blob = await IdbStorage.getBlob(s.location.blobId);
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              createdUrls.push(url);
+              newSongs.push({ name: s.name, location: url, _blobId: s.location.blobId });
+              continue;
+            }
+          } catch (e) {
+            console.warn('Could not load blob for playlist song:', s.name, e);
+          }
+        }
+        newSongs.push({ name: s.name, location: typeof s.location === 'string' ? s.location : (s.location && s.location.filename) || '' });
+      }
+      console.log('loadPlaylist(): loaded playlist', pl.name, 'songs:', newSongs);
+      songs = newSongs;
+      populateSongSelect();
+      // select first song
+      if (songs.length > 0) {
+        await setSong(songs[0]);
+      }
+    }
+
+    function deletePlaylist() {
+      if (!playlistSelect) return;
+      const idx = playlistSelect.value;
+      if (idx === '') return;
+      if (!confirm('Delete selected playlist?')) return;
+      playlists.splice(Number(idx), 1);
+      localStorage.setItem('playlists', JSON.stringify(playlists));
+      populatePlaylistSelect();
+    }
+
+    // initialize playlist UI
+    loadPlaylists();
+    populatePlaylistSelect();
+
+    if (loadPlaylistButton) loadPlaylistButton.addEventListener('click', function(){ loadPlaylist(); });
+    if (deletePlaylistButton) deletePlaylistButton.addEventListener('click', deletePlaylist);
+
+    // Relink flow: allow user to pick a local file and save it to IndexedDB, update library/playlists
+    const relinkFileInput = document.getElementById('relink-file-input');
+
+    async function relinkSongFile(song) {
+      return new Promise((resolve) => {
+        relinkFileInput.value = '';
+        const onChange = async () => {
+          const file = relinkFileInput.files && relinkFileInput.files[0];
+          relinkFileInput.removeEventListener('change', onChange);
+          if (!file) { resolve(); return; }
+          try {
+            if (!window.IdbStorage || !IdbStorage.saveBlob) throw new Error('IndexedDB storage unavailable');
+            const blobId = await IdbStorage.saveBlob(file);
+            console.log('Saved relink file to IndexedDB as', blobId);
+            // Update librarySongs entries matching this song name (best-effort)
+            try {
+              const raw = localStorage.getItem('librarySongs');
+              const lib = raw ? JSON.parse(raw) : [];
+              let updated = false;
+              for (const item of lib) {
+                if (item && item.name === song.name) {
+                  item.location = { blobId: blobId, filename: file.name };
+                  updated = true;
+                }
+              }
+              if (updated) localStorage.setItem('librarySongs', JSON.stringify(lib));
+            } catch (e) { console.warn('Could not update librarySongs', e); }
+
+            // Update playlists that reference this song name
+            try {
+              const rawPl = localStorage.getItem('playlists');
+              const pls = rawPl ? JSON.parse(rawPl) : [];
+              let plUpdated = false;
+              for (const pl of pls) {
+                if (!pl || !Array.isArray(pl.songs)) continue;
+                for (const s of pl.songs) {
+                  if (s && s.name === song.name) {
+                    s.location = { blobId: blobId, filename: file.name };
+                    plUpdated = true;
+                  }
+                }
+              }
+              if (plUpdated) localStorage.setItem('playlists', JSON.stringify(pls));
+              // refresh in-memory playlists
+              loadPlaylists();
+              populatePlaylistSelect();
+            } catch (e) { console.warn('Could not update playlists', e); }
+
+            // Finally, call setSong with the new blob
+            await setSong({ name: song.name, location: { blobId: blobId, filename: file.name }, _blobId: blobId });
+          } catch (err) {
+            console.warn('Error saving relink file', err);
+            alert('Could not save selected file: ' + (err && err.message ? err.message : err));
+          }
+          resolve();
+        };
+        relinkFileInput.addEventListener('change', onChange);
+        relinkFileInput.click();
+      });
+    }
   </script>
 </body>

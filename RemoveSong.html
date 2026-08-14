@@ -10,6 +10,7 @@
     </head>
 
     <body>
+        <a href="HomePage.html" class="home-button">Home</a>
         <h1>Remove Song</h1>
 
         <form id="removeSongForm">
@@ -22,6 +23,12 @@
             <button type="submit">Remove Song from Library</button>
         </form>
 
+        <div id="playlistNotice" class="info" style="margin-top:12px;color:green;"></div>
+
+        <h2 style="margin-top:16px;">Stored Local Files</h2>
+        <div id="localFilesList" style="margin-top:8px;"></div>
+
+        <script src="idbStorage.js"></script>
         <script src="RemoveSong.js"></script>
     </body>
 </html>
