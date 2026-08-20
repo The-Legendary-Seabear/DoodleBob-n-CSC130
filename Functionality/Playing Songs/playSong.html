@@ -1,0 +1,250 @@
+<head>
+  <title>Play Song</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .player-card {
+      width: 320px;
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .track-title {
+      font-weight: 700;
+    }
+
+    .progress-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar span {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: #50e3c2;
+      transition: width 0.1s linear;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .controls button {
+      width: 32%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 0;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .controls button:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .song-picker {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .song-picker label {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .song-picker select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 14px center;
+      background-size: 14px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .song-picker select:focus {
+      border-color: #50e3c2;
+      box-shadow: 0 0 0 3px rgba(80, 227, 194, 0.12);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero-art">
+    <div class="player-card">
+      <div class="player-header">
+        <span class="track-title">Epic Gammer Music</span>
+        <span class="track-time">0:00</span>
+      </div>
+      <div class="progress-bar"><span></span></div>
+      <div class="controls">
+        <button data-action="rewind">◄◄</button>
+        <button data-action="play-pause">►</button>
+        <button data-action="forward">►►</button>
+      </div>
+      <div class="song-picker">
+        <label for="song-select">Choose a song</label>
+        <select id="song-select"></select>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audio-player" src="Epic_Gammer_Music.mp3"></audio>
+
+  <script>
+    const audio = document.getElementById('audio-player');
+    const songSelect = document.getElementById('song-select');
+    const playPauseButton = document.querySelector('button[data-action="play-pause"]');
+    const rewindButton = document.querySelector('button[data-action="rewind"]');
+    const forwardButton = document.querySelector('button[data-action="forward"]');
+    const progressBar = document.querySelector('.progress-bar');
+    const progressFill = progressBar.querySelector('span');
+    const trackTime = document.querySelector('.track-time');
+    const trackTitle = document.querySelector('.track-title');
+
+    const defaultSong = { name: 'Epic Gammer Music', location: 'Epic_Gammer_Music.mp3' };
+    let songs = [defaultSong];
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateProgress() {
+      if (!audio.duration) return;
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = `${percent}%`;
+      trackTime.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+    }
+
+    function setSong(song) {
+      audio.src = song.location;
+      trackTitle.textContent = song.name;
+      audio.load();
+      playPauseButton.textContent = '►';
+      if (!audio.paused) {
+        audio.play();
+        playPauseButton.textContent = '❚❚';
+      }
+    }
+
+    function populateSongSelect() {
+      songSelect.innerHTML = '';
+      songs.forEach((song, index) => {
+        const option = document.createElement('option');
+        option.value = song.location;
+        option.textContent = song.name;
+        option.dataset.name = song.name;
+        if (song.location === defaultSong.location && index === 0) {
+          option.selected = true;
+        }
+        songSelect.appendChild(option);
+      });
+    }
+
+    function loadLibrarySongs() {
+      const storedSongs = localStorage.getItem('librarySongs');
+      if (!storedSongs) return;
+      try {
+        const parsed = JSON.parse(storedSongs);
+        if (Array.isArray(parsed)) {
+          parsed.forEach(song => {
+            if (song && song.name && song.location) {
+              songs.push({ name: song.name, location: song.location });
+            }
+          });
+        }
+      } catch (error) {
+        console.warn('Could not load saved songs:', error);
+      }
+    }
+
+    audio.addEventListener('loadedmetadata', () => {
+      trackTime.textContent = `0:00 / ${formatTime(audio.duration)}`;
+      updateProgress();
+    });
+
+    audio.addEventListener('timeupdate', updateProgress);
+
+    audio.addEventListener('ended', () => {
+      playPauseButton.textContent = '►';
+    });
+
+    playPauseButton.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+        playPauseButton.textContent = '❚❚';
+      } else {
+        audio.pause();
+        playPauseButton.textContent = '►';
+      }
+    });
+
+    rewindButton.addEventListener('click', () => {
+      audio.currentTime = Math.max(0, audio.currentTime - 10);
+    });
+
+    forwardButton.addEventListener('click', () => {
+      audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
+    });
+
+    progressBar.addEventListener('click', event => {
+      const rect = progressBar.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const ratio = clickX / rect.width;
+      if (audio.duration) {
+        audio.currentTime = ratio * audio.duration;
+      }
+    });
+
+    songSelect.addEventListener('change', () => {
+      const selectedOption = songSelect.selectedOptions[0];
+      const song = {
+        name: selectedOption.dataset.name || selectedOption.textContent,
+        location: selectedOption.value
+      };
+      setSong(song);
+    });
+
+    loadLibrarySongs();
+    populateSongSelect();
+  </script>
+</body>

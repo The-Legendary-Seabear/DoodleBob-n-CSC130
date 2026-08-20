@@ -11,7 +11,7 @@
 
     <br>
 
-    <a href="playSong.html">
+    <a href="Functionality/Playing Songs/playSong.html">
         <button type="button" id="playSong">
             Play Songs
         </button>
@@ -19,7 +19,7 @@
 
     <br>
 
-    <a href="AddSong.html">
+    <a href="Functionality/Adding Songs/AddSong.html">
         <button type="button" id="addSong">
             Add Song
         </button>
@@ -27,7 +27,7 @@
 
     <br>
 
-    <a href="RemoveSong.html">
+    <a href="Functionality/Removing Songs/RemoveSong.html">
         <button type="button" id="removeSong">
             Remove Song
         </button>
@@ -35,12 +35,114 @@
 
     <br>
 
-    <a href="TestPage.html">
+    <a href="Test Files/TestPage.html">
         <button type="button" id="test">
             Test Song
         </button>
     </a>
 
+    <a href="Playlists/Playlists.html">
+        <button type="button" id="playlist">
+            Playlists
+        </button>
+    </a>
 
+
+
+
+
+
+
+
+
+ <button id="authorize_button" onclick="handleAuthClick()">
+    Connect Google Drive
+</button>
+
+<pre id="content"></pre>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
+<script>
+    const CLIENT_ID = '47132304169-o76d09ul4qmcuh9cif655snd8of8tl1u.apps.googleusercontent.com';
+
+    const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+
+    let tokenClient;
+
+    function gapiLoaded() {
+        gapi.load('client', initializeGapiClient);
+    }
+
+    async function initializeGapiClient() {
+        await gapi.client.init({
+            discoveryDocs: [
+                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+            ]
+        });
+    }
+
+    function gisLoaded() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: CLIENT_ID,
+            scope: SCOPES,
+
+            callback: async (response) => {
+                if (response.error) {
+                    console.error(response);
+                    return;
+                }
+
+                console.log("Successfully connected to Google Drive!");
+
+                await listFiles();
+            }
+        });
+    }
+
+    function handleAuthClick() {
+        tokenClient.requestAccessToken({
+            prompt: 'consent'
+        });
+    }
+
+    async function listFiles() {
+
+        const response = await gapi.client.drive.files.list({
+            pageSize: 20,
+            fields: 'files(id, name, mimeType)'
+        });
+
+        const files = response.result.files;
+
+        console.log(files);
+
+        const content = document.getElementById('content');
+
+        if (!files || files.length === 0) {
+            content.innerText = 'No files found in Google Drive.';
+            return;
+        }
+
+        let output = 'Files in your Google Drive:\n\n';
+
+        files.forEach(file => {
+            output += file.name + '\n';
+        });
+
+        content.innerText = output;
+    }
+
+    window.onload = () => {
+        gapiLoaded();
+        gisLoaded();
+    };
+</script>
+
+</body>
 
 </body>

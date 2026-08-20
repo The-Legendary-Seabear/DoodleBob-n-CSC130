@@ -1,0 +1,13 @@
+{
+    "playlists": [
+        {
+            "name": "Test Playlist",
+            "description": "Test Playlist for testing playlists",
+            "songs": [
+                "Song A",
+                "Song B",
+                "Song C"
+            ]
+        }
+    ]
+}
