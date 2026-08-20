@@ -34,6 +34,33 @@ a {
   text-decoration: none;
 }
 
+h1, h2, h3 {
+  margin: 0 0 0.75rem;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
 .site-header {
   display: flex;
   flex-wrap: wrap;
@@ -60,4 +87,90 @@ a {
   color: white;
   font-size: 1.4rem;
   box-shadow: var(--shadow);
+}
+
+/* Buttons: no page defines a button class, so this styles every bare
+   <button> consistently (Home, Add/Remove Song forms, Playlists). */
+button {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  background: var(--primary);
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+button:hover {
+  background: #4a55e6;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* Forms: AddSong.html and RemoveSong.html already use these class
+   names, they just never had rules behind them. */
+form {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--surface-strong);
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.85rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.form-group input[type="file"] {
+  padding: 0.5rem;
+  border-style: dashed;
+}
+
+.error {
+  min-height: 1.1rem;
+  font-size: 0.8rem;
+  color: var(--accent);
 }

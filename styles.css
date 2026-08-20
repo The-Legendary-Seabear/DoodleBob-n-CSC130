@@ -1,0 +1,73 @@
+/* Playlists page layout. Relies on the color/shadow tokens defined
+   in ../Main.css (loaded alongside this file). */
+
+header {
+  padding: 2rem 2rem 0;
+}
+
+.music-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+  align-items: start;
+}
+
+.songs-section,
+.playlists-section {
+  background: var(--surface);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.playlist-header h2 {
+  margin: 0;
+}
+
+#songList,
+#playlistList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#songList li,
+#playlistList li {
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.6rem;
+  background: var(--background);
+  color: var(--text);
+}
+
+#playlistList li {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#playlistList li:hover {
+  background: var(--primary-soft);
+}
+
+#addSongButton {
+  margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .music-container {
+    grid-template-columns: 1fr;
+  }
+}
