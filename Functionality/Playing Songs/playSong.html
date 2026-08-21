@@ -1,107 +1,15 @@
 <head>
   <title>Play Song</title>
+  <link rel="icon" href="../../Images/Site Icon/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="../../Images/Site Icon/favicon.svg">
+  <link rel="stylesheet" href="../../Main.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
+    .hero-art {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      margin: 0;
-    }
-
-    .player-card {
-      width: 320px;
-      padding: 24px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-    }
-
-    .player-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      font-size: 14px;
-      letter-spacing: 0.02em;
-    }
-
-    .track-title {
-      font-weight: 700;
-    }
-
-    .progress-bar {
-      position: relative;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.15);
-      overflow: hidden;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-
-    .progress-bar span {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 0%;
-      background: #50e3c2;
-      transition: width 0.1s linear;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .controls button {
-      width: 32%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 0;
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .controls button:hover {
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    .song-picker {
-      margin-top: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .song-picker label {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.75);
-    }
-
-    .song-picker select {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.08) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 14px center;
-      background-size: 14px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      appearance: none;
-      cursor: pointer;
-    }
-
-    .song-picker select:focus {
-      border-color: #50e3c2;
-      box-shadow: 0 0 0 3px rgba(80, 227, 194, 0.12);
+      padding: 2rem;
     }
   </style>
 </head>
@@ -126,7 +34,7 @@
     </div>
   </div>
 
-  <audio id="audio-player" src="Epic_Gammer_Music.mp3"></audio>
+  <audio id="audio-player" src="../../Test Files/EPIC_GAMMER_MUSIC.mp3"></audio>
 
   <script>
     const audio = document.getElementById('audio-player');
@@ -139,7 +47,7 @@
     const trackTime = document.querySelector('.track-time');
     const trackTitle = document.querySelector('.track-title');
 
-    const defaultSong = { name: 'Epic Gammer Music', location: 'Epic_Gammer_Music.mp3' };
+    const defaultSong = { name: 'Epic Gammer Music', location: '../../Test Files/EPIC_GAMMER_MUSIC.mp3' };
     let songs = [defaultSong];
 
     function formatTime(seconds) {

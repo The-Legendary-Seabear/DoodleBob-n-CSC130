@@ -9,7 +9,7 @@ header {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
-  max-width: 960px;
+  max-width: 1160px;
   margin: 0 auto;
   padding: 2rem;
   align-items: start;
@@ -18,8 +18,9 @@ header {
 .songs-section,
 .playlists-section {
   background: var(--surface);
-  border-radius: 1rem;
-  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
   box-shadow: var(--shadow);
 }
 
