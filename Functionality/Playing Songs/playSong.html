@@ -104,6 +104,27 @@
       background: rgba(255, 255, 255, 0.18);
     }
 
+    .volume-control {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .volume-control input {
+      width: 100%;
+      accent-color: #50e3c2;
+      cursor: pointer;
+    }
+
+    .volume-value {
+      min-width: 38px;
+      text-align: right;
+    }
+
     .song-picker {
       margin-top: 18px;
       display: flex;
@@ -133,6 +154,42 @@
     .song-picker select:focus {
       border-color: #50e3c2;
       box-shadow: 0 0 0 3px rgba(80, 227, 194, 0.12);
+    }
+
+    .lyrics-panel {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .lyrics-panel h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .lyrics-status,
+    .lyrics-text {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .lyrics-text {
+      max-height: 220px;
+      margin: 0;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .lyric-line {
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .lyric-line.active {
+      background: rgba(80, 227, 194, 0.14);
+      color: #50e3c2;
     }
 
     .back-button {
@@ -173,10 +230,20 @@
         <button data-action="play-pause">►</button>
         <button data-action="forward" aria-label="Next song">►►</button>
       </div>
+      <div class="volume-control">
+        <label for="volume-slider">Volume</label>
+        <input id="volume-slider" type="range" min="0" max="100" value="100">
+        <span class="volume-value" aria-live="polite">100%</span>
+      </div>
       <div class="song-picker">
         <label for="song-select">Choose a song</label>
         <select id="song-select"></select>
       </div>
+      <section class="lyrics-panel" aria-labelledby="lyrics-heading">
+        <h2 id="lyrics-heading">Lyrics</h2>
+        <p class="lyrics-status" role="status">Loading lyrics...</p>
+        <div class="lyrics-text" hidden></div>
+      </section>
     </div>
   </div>
 
@@ -193,11 +260,108 @@
     const trackTime = document.querySelector('.track-time');
     const trackTitle = document.querySelector('.track-title');
     const trackArtist = document.querySelector('.track-artist');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValue = document.querySelector('.volume-value');
+    const lyricsStatus = document.querySelector('.lyrics-status');
+    const lyricsText = document.querySelector('.lyrics-text');
 
     const defaultSong = { name: 'Epic Gammer Music', artist: 'Unknown Artist', location: '../../Test Files/EPIC_GAMMER_MUSIC.mp3', image: '../../Test Files/Ozzy.jpg' };
     const secondDefaultSong = { name: 'Beethoven', artist: 'Kenndog', location: '../../Test Files/Kenndog - Beethoven.mp3', image: '../../Test Files/Senpai.jpg' };
     let songs = [defaultSong, secondDefaultSong];
     let currentSongIndex = 0;
+    let lyricsRequestController;
+    let lyricsRequestId = 0;
+    let lyricLines = [];
+    let activeLyricIndex = -1;
+
+    function parseSyncedLyrics(syncedLyrics) {
+      return syncedLyrics.split('\n').flatMap(line => {
+        const timestamps = [...line.matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)];
+        const text = line.replace(/\[\d+:\d+(?:\.\d+)?\]/g, '').trim();
+        return timestamps.map(timestamp => ({
+          startTime: Number(timestamp[1]) * 60 + Number(timestamp[2]),
+          text
+        }));
+      }).filter(line => line.text);
+    }
+
+    function displayLyrics(lines) {
+      lyricLines = lines;
+      activeLyricIndex = -1;
+      lyricsText.replaceChildren(...lines.map(line => {
+        const element = document.createElement('div');
+        element.className = 'lyric-line';
+        element.textContent = line.text;
+        return element;
+      }));
+    }
+
+    function updateLyricsHighlight() {
+      if (!lyricLines.some(line => line.startTime !== null)) return;
+      let nextIndex = -1;
+      lyricLines.forEach((line, index) => {
+        if (line.startTime <= audio.currentTime) nextIndex = index;
+      });
+      if (nextIndex === activeLyricIndex) return;
+      activeLyricIndex = nextIndex;
+      const lineElements = lyricsText.querySelectorAll('.lyric-line');
+      lineElements.forEach((element, index) => {
+        element.classList.toggle('active', index === activeLyricIndex);
+        if (index === activeLyricIndex) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+
+    async function loadLyrics(song) {
+      const requestId = ++lyricsRequestId;
+      lyricsRequestController?.abort();
+      lyricsRequestController = new AbortController();
+      lyricsText.hidden = true;
+      lyricsText.replaceChildren();
+      lyricLines = [];
+      activeLyricIndex = -1;
+      lyricsStatus.hidden = false;
+      lyricsStatus.textContent = 'Loading lyrics...';
+
+      const params = new URLSearchParams({
+        artist_name: song.artist || 'Unknown Artist',
+        track_name: song.name
+      });
+
+      try {
+        const response = await fetch(`https://lrclib.net/api/get?${params}`, {
+          signal: lyricsRequestController.signal
+        });
+        if (!response.ok) {
+          throw new Error('Lyrics request failed');
+        }
+
+        const lyrics = await response.json();
+        if (requestId !== lyricsRequestId) return;
+        const syncedLines = parseSyncedLyrics(lyrics.syncedLyrics || '');
+        const plainLines = (lyrics.plainLyrics || '').split('\n')
+          .map(text => ({ startTime: null, text: text.trim() }))
+          .filter(line => line.text);
+        const lines = syncedLines.length ? syncedLines : plainLines;
+        if (!lines.length) {
+          throw new Error('Lyrics unavailable');
+        }
+
+        displayLyrics(lines);
+        lyricsText.hidden = false;
+        lyricsStatus.hidden = true;
+      } catch (error) {
+        if (error.name === 'AbortError' || requestId !== lyricsRequestId) return;
+        lyricsStatus.textContent = 'Lyrics unavailable for this song.';
+      }
+    }
+
+    function updateVolume() {
+      const volume = Number(volumeSlider.value);
+      audio.volume = volume / 100;
+      volumeValue.textContent = `${volume}%`;
+    }
 
     function formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -220,6 +384,7 @@
       trackTitle.textContent = song.name;
       trackArtist.textContent = song.artist || 'Unknown Artist';
       albumArtwork.src = song.image || '../../Test Files/Ozzy.jpg';
+      loadLyrics(song);
       audio.load();
       playPauseButton.textContent = '►';
       if (wasPlaying) {
@@ -273,6 +438,7 @@
     });
 
     audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('timeupdate', updateLyricsHighlight);
 
     audio.addEventListener('ended', () => {
       playPauseButton.textContent = '►';
@@ -313,7 +479,10 @@
       setSong(song);
     });
 
+    volumeSlider.addEventListener('input', updateVolume);
+
     loadLibrarySongs();
     populateSongSelect();
+    updateVolume();
   </script>
 </body>
