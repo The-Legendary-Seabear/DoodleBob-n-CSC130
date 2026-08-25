@@ -20,16 +20,47 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
     }
 
+    .album-artwork {
+      width: 100%;
+      height: 200px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
     .player-header {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "title time"
+        "artist time";
+      column-gap: 16px;
+      row-gap: 4px;
+      align-items: end;
       margin-bottom: 18px;
       font-size: 14px;
       letter-spacing: 0.02em;
     }
 
     .track-title {
+      grid-area: title;
       font-weight: 700;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .track-artist {
+      grid-area: artist;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .track-time {
+      grid-area: time;
+      white-space: nowrap;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
     }
 
     .progress-bar {
@@ -103,21 +134,44 @@
       border-color: #50e3c2;
       box-shadow: 0 0 0 3px rgba(80, 227, 194, 0.12);
     }
+
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease;
+      z-index: 1000;
+    }
+
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
   </style>
 </head>
 
 <body>
+  <a href="../../HomePage.html" class="back-button">← Back to Home</a>
   <div class="hero-art">
     <div class="player-card">
+      <img id="album-artwork" class="album-artwork" src="../../Test Files/Ozzy.jpg" alt="Album Artwork">
       <div class="player-header">
         <span class="track-title">Epic Gammer Music</span>
+        <span class="track-artist">Unknown Artist</span>
         <span class="track-time">0:00</span>
       </div>
       <div class="progress-bar"><span></span></div>
       <div class="controls">
-        <button data-action="rewind">◄◄</button>
+        <button data-action="rewind" aria-label="Previous song">◄◄</button>
         <button data-action="play-pause">►</button>
-        <button data-action="forward">►►</button>
+        <button data-action="forward" aria-label="Next song">►►</button>
       </div>
       <div class="song-picker">
         <label for="song-select">Choose a song</label>
@@ -126,7 +180,7 @@
     </div>
   </div>
 
-  <audio id="audio-player" src="Epic_Gammer_Music.mp3"></audio>
+  <audio id="audio-player" src="../../Test Files/EPIC_GAMMER_MUSIC.mp3"></audio>
 
   <script>
     const audio = document.getElementById('audio-player');
@@ -138,9 +192,12 @@
     const progressFill = progressBar.querySelector('span');
     const trackTime = document.querySelector('.track-time');
     const trackTitle = document.querySelector('.track-title');
+    const trackArtist = document.querySelector('.track-artist');
 
-    const defaultSong = { name: 'Epic Gammer Music', location: 'Epic_Gammer_Music.mp3' };
-    let songs = [defaultSong];
+    const defaultSong = { name: 'Epic Gammer Music', artist: 'Unknown Artist', location: '../../Test Files/EPIC_GAMMER_MUSIC.mp3', image: '../../Test Files/Ozzy.jpg' };
+    const secondDefaultSong = { name: 'Beethoven', artist: 'Kenndog', location: '../../Test Files/Kenndog - Beethoven.mp3', image: '../../Test Files/Senpai.jpg' };
+    let songs = [defaultSong, secondDefaultSong];
+    let currentSongIndex = 0;
 
     function formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -155,15 +212,26 @@
       trackTime.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
     }
 
+    const albumArtwork = document.getElementById('album-artwork');
+
     function setSong(song) {
+      const wasPlaying = !audio.paused;
       audio.src = song.location;
       trackTitle.textContent = song.name;
+      trackArtist.textContent = song.artist || 'Unknown Artist';
+      albumArtwork.src = song.image || '../../Test Files/Ozzy.jpg';
       audio.load();
       playPauseButton.textContent = '►';
-      if (!audio.paused) {
-        audio.play();
+      if (wasPlaying) {
+        audio.play().catch(() => {});
         playPauseButton.textContent = '❚❚';
       }
+    }
+
+    function changeSong(direction) {
+      currentSongIndex = (currentSongIndex + direction + songs.length) % songs.length;
+      songSelect.selectedIndex = currentSongIndex;
+      setSong(songs[currentSongIndex]);
     }
 
     function populateSongSelect() {
@@ -173,7 +241,9 @@
         option.value = song.location;
         option.textContent = song.name;
         option.dataset.name = song.name;
-        if (song.location === defaultSong.location && index === 0) {
+        option.dataset.artist = song.artist || 'Unknown Artist';
+        option.dataset.image = song.image || '../../Test Files/Ozzy.jpg';
+        if (index === currentSongIndex) {
           option.selected = true;
         }
         songSelect.appendChild(option);
@@ -188,7 +258,7 @@
         if (Array.isArray(parsed)) {
           parsed.forEach(song => {
             if (song && song.name && song.location) {
-              songs.push({ name: song.name, location: song.location });
+              songs.push({ name: song.name, artist: song.artist || 'Unknown Artist', location: song.location, image: song.image || '../../Test Files/Ozzy.jpg' });
             }
           });
         }
@@ -218,13 +288,9 @@
       }
     });
 
-    rewindButton.addEventListener('click', () => {
-      audio.currentTime = Math.max(0, audio.currentTime - 10);
-    });
+    rewindButton.addEventListener('click', () => changeSong(-1));
 
-    forwardButton.addEventListener('click', () => {
-      audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
-    });
+    forwardButton.addEventListener('click', () => changeSong(1));
 
     progressBar.addEventListener('click', event => {
       const rect = progressBar.getBoundingClientRect();
@@ -236,10 +302,13 @@
     });
 
     songSelect.addEventListener('change', () => {
+      currentSongIndex = songSelect.selectedIndex;
       const selectedOption = songSelect.selectedOptions[0];
       const song = {
         name: selectedOption.dataset.name || selectedOption.textContent,
-        location: selectedOption.value
+        artist: selectedOption.dataset.artist || 'Unknown Artist',
+        location: selectedOption.value,
+        image: selectedOption.dataset.image || '../../Test Files/Ozzy.jpg'
       };
       setSong(song);
     });
