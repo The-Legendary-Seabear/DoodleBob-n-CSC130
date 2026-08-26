@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoodleBob Unit Tests</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; max-width: 60rem; }
+        #summary { font-weight: bold; margin-bottom: 1rem; }
+        #results { padding-left: 1.25rem; }
+        .pass { color: #176b36; }
+        .fail { color: #a31d1d; }
+        form { display: none; }
+    </style>
+</head>
+<body>
+    <h1>DoodleBob Unit Tests</h1>
+    <button id="runTests" type="button">Run tests</button>
+    <p id="summary">Tests have not run.</p>
+    <ol id="results"></ol>
+
+    <form id="addSongForm">
+        <input id="songName" name="songName">
+        <input id="songFile" name="songFile">
+        <span id="songNameError"></span>
+        <span id="songFileError"></span>
+    </form>
+    <ul id="playlistList"></ul>
+    <h2 id="selectedPlaylistName"></h2>
+    <ul id="songList"></ul>
+
+    <script src="../Functionality/Adding%20Songs/AddSong.js"></script>
+    <script src="../Functionality/Removing%20Songs/RemoveSong.js"></script>
+    <script>
+        const realFetch = window.fetch.bind(window);
+        window.fetch = (url, options) => {
+            if (url === 'PlaylistStorage.json') {
+                return realFetch('../Playlists/PlaylistStorage.json', options);
+            }
+            return realFetch(url, options);
+        };
+    </script>
+    <script src="../Playlists/Playlists.js"></script>
+    <script src="unit-tests.js"></script>
+</body>
+</html>
