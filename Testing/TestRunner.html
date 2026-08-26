@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App Test Runner</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.5; margin: 2rem auto; max-width: 760px; padding: 0 1rem; }
+        h1 { margin-bottom: 0.25rem; }
+        #summary { font-weight: bold; margin: 1rem 0; }
+        #results { list-style: none; padding: 0; }
+        li { border-left: 4px solid #999; margin: 0.5rem 0; padding: 0.5rem 0.75rem; }
+        li.pass { border-color: #218739; }
+        li.fail { border-color: #c62828; }
+        .error { color: #c62828; white-space: pre-wrap; }
+        iframe { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Music App Test Runner</h1>
+    <div id="summary">Running tests...</div>
+    <ul id="results"></ul>
+    <script src="browser-tests.js"></script>
+</body>
+</html>
