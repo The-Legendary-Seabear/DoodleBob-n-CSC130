@@ -3,7 +3,7 @@ let selectedPlaylist = null;
 
 
 async function loadPlaylists() {
-    const response = await fetch("playlists.json");
+    const response = await fetch("PlaylistStorage.json");
     playlistData = await response.json();
 
     displayPlaylists();
