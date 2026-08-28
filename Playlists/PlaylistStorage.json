@@ -8,6 +8,14 @@
                 "Song B",
                 "Song C"
             ]
+        },
+        {
+            "name": "Test Playlist 2",
+            "description":"Test Playlist for testing playlists",
+            "songs": [
+                "Beethoven",
+                "Epic Gammer Music"
+            ]
         }
     ]
 }

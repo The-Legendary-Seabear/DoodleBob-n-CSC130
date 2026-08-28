@@ -25,6 +25,10 @@
                     Select a Playlist
                 </h2>
 
+                <button id="playPlaylistButton" type="button" disabled>
+                    Play Playlist
+                </button>
+
                 <ul id="songList">
                     <!-- JavaScript will put songs here -->
                 </ul>
@@ -53,6 +57,21 @@
 
             </aside>
         </main>
+        <dialog id="addSongDialog">
+            <form id="addSongForm" method="dialog">
+                <h2>Add Song</h2>
+                <label for="songToAdd">Choose a song</label>
+                <select id="songToAdd" name="songToAdd" required>
+                    <option value="">Select a song</option>
+                </select>
+                <p id="addSongError" role="alert"></p>
+                <div class="dialog-actions">
+                    <button type="button" id="cancelAddSongButton" class="btn-secondary">Cancel</button>
+                    <button type="submit">Add Song</button>
+                </div>
+            </form>
+        </dialog>
+        <script src="../Functionality/libraryStorage.js"></script>
         <script src="Playlists.js"></script>
     </body>
 </html>
