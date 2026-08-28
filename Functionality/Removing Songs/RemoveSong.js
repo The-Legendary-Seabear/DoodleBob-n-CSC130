@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function()
 
         if (wasRemoved) {
             populateSongList(selectElement);
-            window.location.href = 'HomePage.html';
+            window.location.href = '/HomePage.html';
         } else {
             errorElement.textContent = 'That song was not found in the library.';
         }

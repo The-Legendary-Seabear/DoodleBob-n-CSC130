@@ -72,7 +72,7 @@ if (form) {
             Library.addSong(new Song(songNameValue, songFileValue));
             console.log(Library.Songs);
             // Navigate User back to main page
-            window.location.href = "HomePage.html";
+            window.location.href = "/HomePage.html";
         }
     });
 }

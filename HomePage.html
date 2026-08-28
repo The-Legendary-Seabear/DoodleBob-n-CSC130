@@ -1,68 +1,139 @@
-<!-- hewwo pwincess -->
-
-<link rel="stylesheet" href="Main.css">
-
+<!DOCTYPE html>
+<html>
 <head>
-<title>Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href="Images/Site Icon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="Images/Site Icon/favicon.svg">
+    <link rel="stylesheet" href="Main.css">
 </head>
 <body>
 
-    <h1>Music Player Website</h1>
+    <header class="site-header">
+        <div class="brand">
+            <div class="brand-mark">&#9834;</div>
+            <div>
+                <div class="brand-name">Harmony Hub</div>
+                <p class="brand-tagline">Your music, your mood, your mix.</p>
+            </div>
+        </div>
 
-    <br>
+        <ul class="site-nav">
+            <li><a href="#features">Features</a></li>
+            <li><a href="Functionality/Playing Songs/playSong.html">Listen</a></li>
+            <li><a href="Functionality/Adding Songs/AddSong.html">Create</a></li>
+            <li><a href="Test Files/PageNotFound.html">Themes</a></li>
+        </ul>
+    </header>
 
-    <a href="Functionality/Playing Songs/playSong.html">
-        <button type="button" id="playSong">
-            Play Songs
-        </button>
-    </a>
+    <section class="hero">
+        <div class="hero-copy">
+            <h1>
+                Discover &amp; design the perfect soundtrack for every moment.
+            </h1>
+            <p>
+                Stream songs, build playlists, and personalize your listening experience with an easy, modern music landing page built for fans and creators.
+            </p>
 
-    <br>
+            <div class="hero-actions">
+                <a class="btn" href="Functionality/Playing Songs/playSong.html">
+                    Start Listening
+                </a>
+                <a class="btn btn-secondary" href="Playlists/Playlists.html">
+                    Build a Playlist
+                </a>
+            </div>
+        </div>
 
-    <a href="Functionality/Adding Songs/AddSong.html">
-        <button type="button" id="addSong">
-            Add Song
-        </button>
-    </a>
+        <!-- Mini Player. Maybe tie into Play Song functionality? -->
+        <div class="player-card">
+            <div class="player-header">
+                <span class="track-title">
+                    Midnight Groove
+                </span>
+                <span class="track-time">
+                    3:42
+                </span>
+            </div>
+            <div class="progress-bar"><span style="width: 62%;"></span></div>
+            <div class="controls">
+                <button data-action="rewind">◄◄</button>
+                <button data-action="play-pause">►</button>
+                <button data-action="forward">►►</button>
+            </div>
+        </div>
+    </section>
 
-    <br>
+    <section class="section" id="features">
+        <h2>Why Harmony Hub?</h2>
 
-    <a href="Functionality/Removing Songs/RemoveSong.html">
-        <button type="button" id="removeSong">
-            Remove Song
-        </button>
-    </a>
+        <div class="feature-grid">
+            <div class="card">
+                <h3>
+                    Smart Playlists
+                </h3>
+                <p>
+                    Create mood-based playlists in seconds and keep your favorite tracks close at hand.
+                </p>
+            </div>
 
-    <br>
+            <div class="card">
+                <h3>
+                    Clear Navigation
+                </h3>
+                <p>
+                    Find songs, albums, and playlists quickly with a clean interface designed for music lovers.
+                </p>
+            </div>
 
-    <a href="Test Files/TestPage.html">
-        <button type="button" id="test">
-            Test Song
-        </button>
-    </a>
+            <div class="card">
+                <h3>
+                    Responsive Design
+                </h3>
+                <p>
+                    Looks great on desktop, tablet, and mobile so your music flows on every device.
+                </p>
+            </div>
+        </div>
+    </section>
 
-    <a href="Playlists/Playlists.html">
-        <button type="button" id="playlist">
-            Playlists
-        </button>
-    </a>
+    <section class="section">
+        <div class="split-section">
+            <div>
+                <h2>
+                    Listen Wherever You Are
+                </h2>
+                <p>
+                    Jump into curated song collections or continue listening to your latest tracks with seamless playback.
+                </p>
 
+                <!-- Extra Pages -->
+                <div class="hero-actions">
+                    <a class="btn btn-secondary" href="Functionality/Removing Songs/RemoveSong.html">
+                        Remove a Song
+                    </a>
+                    <a class="btn btn-secondary" href="Test Files/TestPage.html">
+                        Test Page
+                    </a>
+                </div>
 
+                <button id="authorize_button" type="button" onclick="handleAuthClick()" style="margin-top: 1rem;">
+                    Connect Google Drive
+                </button>
+                <pre id="content"></pre>
+            </div>
 
-
-
-
-
-
-
- <button id="authorize_button" onclick="handleAuthClick()">
-    Connect Google Drive
-</button>
-
-<pre id="content"></pre>
-
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://apis.google.com/js/api.js"></script>
+            <div class="card">
+                <h3>Recently Played</h3>
+                <ul class="recent-list">
+                    <li>Dreamscape - Electric Bloom</li>
+                    <li>Summer Pulse - Neon Shore</li>
+                    <li>Sunrise Beats - Coastal Drive</li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js"></script>
@@ -144,5 +215,4 @@
 </script>
 
 </body>
-
-</body>
+</html>
