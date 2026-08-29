@@ -50,29 +50,36 @@ if (form) {
         // document.getElementById('formFeedback').textContent = '';
 
         const songNameValue = document.getElementById('songName').value.trim();
-        const songFileValue = document.getElementById('songFile').value;
+        const songFileInput = document.getElementById('songFile');
+        const selectedFile = songFileInput && songFileInput.files && songFileInput.files[0];
         let isValid = true;
 
         if (songNameValue === '') {
             document.getElementById('songNameError').textContent = 'Song Name is required.';
             isValid = false;
         }
-        if (songFileValue === '') {
+        if (!selectedFile) {
             document.getElementById('songFileError').textContent = 'Song File is required.';
             isValid = false;
         }
         // 5. Process data if validation passes
         if (isValid) {
-            // Gather data using the native FormData API
-            const formData = new FormData(form);
-            console.log('Form submitted successfully!');
-            console.log('Song Name gathered:', formData.get('songName'));
-            // Display success message to the user
-            // document.getElementById('formFeedback').textContent = 'Login successful! (Check your console)';
-            Library.addSong(new Song(songNameValue, songFileValue));
-            console.log(Library.Songs);
-            // Navigate User back to main page
-            window.location.href = "/HomePage.html";
+            const reader = new FileReader();
+            reader.onload = function() {
+                const formData = new FormData(form);
+                console.log('Form submitted successfully!');
+                console.log('Song Name gathered:', formData.get('songName'));
+
+                const fileDataUrl = typeof reader.result === 'string' ? reader.result : selectedFile.name;
+                Library.addSong(new Song(songNameValue, fileDataUrl));
+                console.log(Library.Songs);
+
+                // Navigate User back to main page
+                if (window && window.location) {
+                    window.location.href = "/HomePage.html";
+                }
+            };
+            reader.readAsDataURL(selectedFile);
         }
     });
 }
