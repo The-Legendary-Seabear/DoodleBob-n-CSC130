@@ -58,6 +58,50 @@ function createDocument(elements = {}) {
     };
 }
 
+test('adding a song from a file stores a playable data URL', async () => {
+    const storage = createStorage();
+    const form = {
+        addEventListener(eventName, handler) { this[eventName] = handler; },
+        submit(event) {
+            return this.submitHandler ? this.submitHandler(event) : undefined;
+        }
+    };
+    const songFileInput = {
+        files: [{ name: 'demo.mp3' }],
+        value: 'C:\\fakepath\\demo.mp3'
+    };
+    const document = createDocument({
+        addSongForm: form,
+        songName: { value: 'Demo Song' },
+        songFile: songFileInput,
+        songNameError: { textContent: '' },
+        songFileError: { textContent: '' }
+    });
+
+    class MockFileReader {
+        constructor() {
+            this.result = 'data:audio/mpeg;base64,AAAA';
+        }
+        readAsDataURL(file) {
+            this.file = file;
+            this.onload && this.onload();
+        }
+    }
+
+    const { Library } = loadScript('Functionality/Adding Songs/AddSong.js', {
+        localStorage: storage,
+        document,
+        FileReader: MockFileReader,
+        window: { location: { href: '' } }
+    }, ['Library']);
+
+    await form.submit({ preventDefault() {} });
+
+    const savedSongs = JSON.parse(storage.getItem('librarySongs'));
+    assert.equal(savedSongs[0].name, 'Demo Song');
+    assert.match(savedSongs[0].location, /^data:audio\//);
+});
+
 test('Song stores its name and file location', () => {
     const storage = createStorage();
     const { Song } = loadScript('Functionality/Adding Songs/AddSong.js', {

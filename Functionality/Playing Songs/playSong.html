@@ -250,6 +250,7 @@
 
   <audio id="audio-player" src="../../Test Files/EPIC_GAMMER_MUSIC.mp3"></audio>
 
+  <script src="../libraryStorage.js"></script>
   <script>
     const audio = document.getElementById('audio-player');
     const songSelect = document.getElementById('song-select');
@@ -266,9 +267,7 @@
     const lyricsStatus = document.querySelector('.lyrics-status');
     const lyricsText = document.querySelector('.lyrics-text');
 
-    const defaultSong = { name: 'Epic Gammer Music', artist: 'Unknown Artist', location: '../../Test Files/EPIC_GAMMER_MUSIC.mp3', image: '../../Test Files/Ozzy.jpg' };
-    const secondDefaultSong = { name: 'Beethoven', artist: 'Kenndog', location: '../../Test Files/Kenndog - Beethoven.mp3', image: '../../Test Files/Senpai.jpg' };
-    let songs = [defaultSong, secondDefaultSong];
+    let songs = [];
     let currentSongIndex = 0;
     let lyricsRequestController;
     let lyricsRequestId = 0;
@@ -433,6 +432,33 @@
       }
     }
 
+    async function loadPlaylistSongs() {
+      const playlistIndex = new URLSearchParams(window.location.search).get('playlist');
+      if (playlistIndex === null) return;
+
+      let playlistData;
+      const storedPlaylists = localStorage.getItem('playlists');
+      if (storedPlaylists) {
+        playlistData = JSON.parse(storedPlaylists);
+      } else {
+        const response = await fetch('../../Playlists/PlaylistStorage.json');
+        playlistData = await response.json();
+      }
+
+      const playlist = playlistData.playlists[Number(playlistIndex)];
+      if (!playlist) return;
+
+      const songsByName = new Map(songs.map(song => [song.name, song]));
+      songs = playlist.songs
+        .map(songName => songsByName.get(songName))
+        .filter(Boolean);
+
+      if (songs.length > 0) {
+        currentSongIndex = 0;
+        setSong(songs[currentSongIndex]);
+      }
+    }
+
     audio.addEventListener('loadedmetadata', () => {
       trackTime.textContent = `0:00 / ${formatTime(audio.duration)}`;
       updateProgress();
@@ -483,7 +509,9 @@
     volumeSlider.addEventListener('input', updateVolume);
 
     loadLibrarySongs();
-    populateSongSelect();
-    updateVolume();
+    loadPlaylistSongs().then(() => {
+      populateSongSelect();
+      updateVolume();
+    });
   </script>
 </body>

@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Playlist Creator</title>
+
+        <link rel="icon" href="../Images/Site Icon/favicon.ico" sizes="any">
+        <link rel="icon" type="image/svg+xml" href="../Images/Site Icon/favicon.svg">
+        <link rel="stylesheet" href="../styles.css">
+        <link rel="stylesheet" href="../Main.css">
+    </head>
+    
+    <body>
+        <header>
+            <h1>Playlist Creation Page</h1>
+        </header>
+
+        <main class="music-container">
+            <form id="createPlaylistForm">
+                <div class="form-group">
+                    <label for="playlistName">Playlist Name:</label>
+                    <input type="text" id="playlistName" name="playlistName" required>
+                    <span id="playlistNameError" class="error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" name="description">
+                    <span id="descriptionError" class="error"></span>
+                </div>
+
+                <button type="submit">Add Playlist</button>
+            </form>
+        </main>
+        <script src="PlaylistCreation.js"></script>
+    </body>
+</html>

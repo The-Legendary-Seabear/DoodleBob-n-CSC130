@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup Overlay Example</title>
+    <style>
+        /* Style the main page trigger button */
+        .trigger-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Style the popup modal itself */
+        dialog {
+            border: none;
+            border-radius: 8px;
+            padding: 24px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Style the dark overlay backdrop background */
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px); /* Gives a modern blurred effect */
+        }
+
+        /* Basic inside layout */
+        .modal-content h2 {
+            margin-top: 0;
+        }
+
+        .close-btn {
+            margin-top: 16px;
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Trigger Button -->
+    <button class="trigger-btn" id="openModal">Click to Open Popup</button>
+
+    <!-- Popup Window and Overlay Container -->
+    <dialog id="popupModal">
+        <div class="modal-content">
+            <h2>Hello World!</h2>
+            <p>This is a modern popup overlay using the native HTML dialog tag.</p>
+            <button class="close-btn" id="closeModal">Close</button>
+        </div>
+    </dialog>
+
+    <!-- JavaScript to toggle visibility -->
+    <script>
+        const modal = document.getElementById('popupModal');
+        const openBtn = document.getElementById('openModal');
+        const closeBtn = document.getElementById('closeModal');
+
+        // Open popup with overlay backdrop
+        openBtn.addEventListener('click', () => {
+            modal.showModal(); 
+        });
+
+        // Close popup
+        closeBtn.addEventListener('click', () => {
+            modal.close();
+        });
+    </script>
+
+</body>
+</html>
